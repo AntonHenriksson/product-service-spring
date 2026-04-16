@@ -1,4 +1,14 @@
 package se.productservicespring.app.dto;
 
-public record ProductRequest() {
+import java.math.BigDecimal;
+
+public record ProductRequest(
+        Long productId,
+        BigDecimal price,
+        String title,
+        String description,
+        String category,
+        String image
+
+) {
 }

@@ -1,4 +1,7 @@
 package se.productservicespring.app.repo;
 
-public interface ProductRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import se.productservicespring.app.model.Product;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }
