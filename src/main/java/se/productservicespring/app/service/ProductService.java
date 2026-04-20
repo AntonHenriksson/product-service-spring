@@ -15,18 +15,27 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final FakeStoreClientService fakeStoreClientService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, FakeStoreClientService fakeStoreClientService) {
         this.productRepository = productRepository;
+        this.fakeStoreClientService = fakeStoreClientService;
     }
 
+    // the dumb method that calls syncing from fake-store
+    @Transactional
+    public List<ProductResponse> fetchProductsFromFakeStore() {
+        return syncProducts(fakeStoreClientService.fetchExternalProducts());
+    }
+
+    //Todo add safety here
     @Transactional
     public List<ProductResponse> syncProducts(List<ProductRequest> requests) {
         List<Product> productsToSave = requests
                 .stream()
                 .map(ProductMapper::toProduct)
                 .toList();
-        
+
         List<Product> savedProducts = productRepository.saveAll(productsToSave);
 
         return savedProducts
