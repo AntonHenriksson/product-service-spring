@@ -2,7 +2,9 @@ package se.productservicespring.app.controller;
 
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.productservicespring.app.dto.ProductResponse;
@@ -19,9 +21,19 @@ public class ProductController {
         this.productService = productService;
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/sync")
     public ResponseEntity<List<ProductResponse>> fetchProductsFromExternalApi() {
         return ResponseEntity.ok(productService.fetchProductsFromFakeStore());
+    }
+
+    @GetMapping("/public/all")
+    public ResponseEntity<List<ProductResponse>> getALlProducts() {
+        return ResponseEntity.ok(productService.getProducts());
+    }
+
+    @GetMapping("/public/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProduct(id));
     }
 }
