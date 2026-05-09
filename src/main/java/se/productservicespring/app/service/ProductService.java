@@ -12,6 +12,8 @@ import se.productservicespring.app.repo.ProductRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -26,7 +28,7 @@ public class ProductService {
     }
 
     // the dumb method that calls syncing from fake-store
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 600000)
     @Transactional
     public List<ProductResponse> fetchProductsFromFakeStore() {
         Date now = new Date();
@@ -36,18 +38,25 @@ public class ProductService {
         return syncProducts(fakeStoreClientService.fetchExternalProducts());
     }
 
-    //Todo add safety here
     @Transactional
     public List<ProductResponse> syncProducts(List<ProductRequest> requests) {
-        List<Product> productsToSave = requests
+        Set<Long> existingProductIds = productRepository.findAll()
                 .stream()
+                .map(Product::getProductId)
+                .collect(Collectors.toSet());
+
+        List<Product> newProductsToSave = requests.stream()
+                .filter(request -> !existingProductIds.contains(request.productId()))
                 .map(ProductMapper::toProduct)
                 .toList();
 
-        List<Product> savedProducts = productRepository.saveAll(productsToSave);
+        if (newProductsToSave.isEmpty()) {
+            return List.of();
+        }
 
-        return savedProducts
-                .stream()
+        List<Product> savedProducts = productRepository.saveAll(newProductsToSave);
+
+        return savedProducts.stream()
                 .map(ProductMapper::toResponse)
                 .toList();
     }
