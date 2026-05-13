@@ -27,4 +27,6 @@ public class ProductMapper {
                 product.getCategory(),
                 product.getImage());
     }
+
+
 }

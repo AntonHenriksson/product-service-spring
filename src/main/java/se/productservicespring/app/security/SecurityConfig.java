@@ -29,6 +29,8 @@ public class SecurityConfig {
     private String localFrontendUrl;
     @Value("${PROD_FRONTEND}")
     private String prodFrontendUrl;
+    @Value("${CART_URL}")
+    private String cartUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,7 +57,8 @@ public class SecurityConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 localFrontendUrl,
-                                prodFrontendUrl
+                                prodFrontendUrl,
+                                cartUrl
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")

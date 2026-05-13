@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import se.productservicespring.app.dto.ProductRequest;
+import se.productservicespring.app.dto.ProductRequestId;
 import se.productservicespring.app.dto.ProductResponse;
 import se.productservicespring.app.mapper.ProductMapper;
 import se.productservicespring.app.model.Product;
@@ -57,6 +58,17 @@ public class ProductService {
         List<Product> savedProducts = productRepository.saveAll(newProductsToSave);
 
         return savedProducts.stream()
+                .map(ProductMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional
+    public List<ProductResponse> getProductsByIds(List<ProductRequestId> request) {
+        List<Long> ids = request.stream()
+                .map(ProductRequestId::productId)
+                .toList();
+        List<Product> products = productRepository.findAllByIdIn(ids);
+        return products.stream()
                 .map(ProductMapper::toResponse)
                 .toList();
     }
