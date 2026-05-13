@@ -35,7 +35,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProduct(id));
     }
 
-    @GetMapping("/batch")
+    @PostMapping("/batch")
     public ResponseEntity<List<ProductResponse>> getCartProducts(@RequestBody List<ProductRequestId> products) {
         return ResponseEntity.ok(productService.getProductsByIds(products));
     }
