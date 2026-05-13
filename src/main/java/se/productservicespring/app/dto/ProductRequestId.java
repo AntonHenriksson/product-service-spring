@@ -1,6 +1,8 @@
 package se.productservicespring.app.dto;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public record ProductRequestId(
-        Long productId
+        @JsonValue Long productId
 ) {
 }
